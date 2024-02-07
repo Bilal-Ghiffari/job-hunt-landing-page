@@ -1,16 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import React from "react";
+import { FeatureJobType } from "../../../../../types";
 
-type Props = {
-  image: string;
-  desc: string;
-  categories: string[];
-  jobType: string;
-  location: string;
-  name: string;
-  type: string;
-};
+interface JobItem extends FeatureJobType {}
 
 export default function ItemJob({
   categories,
@@ -20,7 +13,7 @@ export default function ItemJob({
   location,
   name,
   type,
-}: Props) {
+}: JobItem) {
   return (
     <div className="border border-border p-6 cursor-pointer">
       <div className="flex flex-row justify-between items-center">
@@ -40,7 +33,13 @@ export default function ItemJob({
       </div>
       <div className="space-x-2">
         {categories.map((item: string, i: number) => (
-          <Badge key={i}>{item}</Badge>
+          <Badge
+            key={i}
+            variant="outline"
+            className="rounded border-primary bg-primary/5 text-primary"
+          >
+            {item}
+          </Badge>
         ))}
       </div>
     </div>
