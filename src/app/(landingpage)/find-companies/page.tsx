@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CompanyType, filterFormType } from "../../../types";
+import { CompanyType, filterFormType } from "../../../../types";
 import { CATEGORIES_OPTIONS } from "@/constant";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

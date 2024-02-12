@@ -2,7 +2,7 @@ import Footer from "@/components/layouts/Footer";
 import NavbarComponent from "@/components/layouts/Navbar";
 import type { Metadata } from "next";
 import { Epilogue } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 
 const epilogue = Epilogue({ subsets: ["latin"] });
 
