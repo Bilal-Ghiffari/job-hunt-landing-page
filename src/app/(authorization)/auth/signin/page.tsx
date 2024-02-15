@@ -15,6 +15,9 @@ import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { signIn } from "next-auth/react";
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
@@ -24,6 +27,21 @@ export default function SignInPage({}: Props) {
   });
   const onSubmit = (val: z.infer<typeof formSignInSchema>) => {
     console.log("val", val);
+  };
+  const router = useRouter();
+  const onSubmitSigninWithGoogle = async () => {
+    const authenticated = await signIn("google", {
+      redirect: false,
+      callbackUrl: "/",
+    });
+    if (authenticated?.error) {
+      console.log("authenticatedError", authenticated?.error);
+      toast({
+        title: "Error",
+        description: "Email or password maybe wrong",
+      });
+      return;
+    }
   };
   return (
     <div>
@@ -67,6 +85,9 @@ export default function SignInPage({}: Props) {
           </Button>
         </form>
       </Form>
+      <Button onClick={onSubmitSigninWithGoogle} className="w-full mt-3">
+        Sign In with Google
+      </Button>
       <div className="text-gray-500 text-sm mt-6">
         don't have an account?{" "}
         <Link href="/auth/signup" className="text-primary font-medium">

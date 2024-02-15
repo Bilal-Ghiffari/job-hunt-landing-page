@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Epilogue } from "next/font/google";
 import "../globals.css";
 import Image from "next/image";
+import { Toaster } from "@/components/ui/toaster";
 
 type Props = {
   children: React.ReactNode;
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: Props) {
             </div>
           </div>
         </main>
+        <Toaster />
       </body>
     </html>
   );

@@ -4,21 +4,28 @@ import React from "react";
 import { Button } from "../../ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import MenuAuth from "@/components/organisme/MenuAuth";
 
 type Props = {};
 
 export default function NavbarComponent({}: Props) {
+  const { data: session, status } = useSession();
+  console.log("session", session);
+  // console.log("authenticated", status ==== "");
   const router = useRouter();
   return (
     <header className="px-32 py-5 flex flex-row items-start justify-between">
       <div className="inline-flex items-center gap-12">
         <div>
-          <Image
-            src="/images/logo2.png"
-            alt="/images/logo2.png"
-            width={160}
-            height={36}
-          />
+          <Link href={"/"}>
+            <Image
+              src="/images/logo2.png"
+              alt="/images/logo2.png"
+              width={160}
+              height={36}
+            />
+          </Link>
         </div>
         <div>
           <Link
@@ -36,10 +43,16 @@ export default function NavbarComponent({}: Props) {
         </div>
       </div>
       <div className="inline-flex items-center gap-4 h-8">
-        <Button variant="link" onSubmit={() => router.push("/auth/signin")}>
-          Login
-        </Button>
-        <Button>Sign Up</Button>
+        {status === "authenticated" ? (
+          <MenuAuth />
+        ) : (
+          <>
+            <Button variant="link" onClick={() => router.push("/auth/signin")}>
+              Login
+            </Button>
+            <Button onClick={() => router.push("/auth/signup")}>Sign Up</Button>
+          </>
+        )}
       </div>
     </header>
   );

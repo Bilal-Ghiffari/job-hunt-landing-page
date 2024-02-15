@@ -3,6 +3,7 @@ import NavbarComponent from "@/components/layouts/Navbar";
 import type { Metadata } from "next";
 import { Epilogue } from "next/font/google";
 import "../globals.css";
+import AuthProvider from "@/providers/AuthProvider";
 
 const epilogue = Epilogue({ subsets: ["latin"] });
 
@@ -19,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${epilogue.className} relative overflow-x-hidden`}>
-        <NavbarComponent />
-        <main>
-          {children}
-          <Footer />
-        </main>
+        <AuthProvider>
+          <NavbarComponent />
+          <main>
+            {children}
+            <Footer />
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );

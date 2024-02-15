@@ -9,9 +9,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
 import { formSignUpSchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,11 +21,28 @@ import { z } from "zod";
 type Props = {};
 
 export default function SignUpPage({}: Props) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSignUpSchema>>({
     resolver: zodResolver(formSignUpSchema),
   });
-  const onSubmit = (val: z.infer<typeof formSignUpSchema>) => {
-    console.log("val", val);
+  const onSubmit = async (val: z.infer<typeof formSignUpSchema>) => {
+    try {
+      await fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(val),
+      });
+      toast({
+        title: "Success",
+        description: "Create account success",
+      });
+      await router.push("/auth/signin");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Please tyr again",
+      });
+    }
   };
   return (
     <div>
@@ -37,7 +56,7 @@ export default function SignUpPage({}: Props) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter your FullName" {...field} />
                 </FormControl>
