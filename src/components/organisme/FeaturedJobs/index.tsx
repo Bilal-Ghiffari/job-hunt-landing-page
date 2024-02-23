@@ -1,25 +1,22 @@
+"use client";
 import TitleSection from "@/components/atoms/TitleSection";
-import React from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ItemJob from "./ItemJob";
+import useSWR from "swr";
+import { fetcher, parsingJobs } from "@/lib/utils";
+import { JobItemType } from "../../../../types";
+import { useListJobs } from "@/hooks/useFeaturedJobs";
 
 type Props = {};
 
 export default function FeaturedJobs({}: Props) {
+  const { jobs, isLoading, error } = useListJobs("jobs/featured");
   return (
     <div className="mt-32 mb-10">
       <TitleSection word1="Featured" word2="jobs" />
-      <div className="grid grid-cols-4 gap-8 mt-12">
-        {[0, 1, 2].map((i: number) => (
-          <ItemJob
-            key={i}
-            image="/images/company.png"
-            jobType="Full Time"
-            name="Email Marketing"
-            type="Agency"
-            location="Paris, France"
-            desc="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit, libero aliquam. Sit corrupti numquam repudiandae tempore, dolorem quibusdam aperiam veniam. Pariatur illum fuga aliquam ab, eaque dolore modi quos iure?"
-            categories={["Marketing", "Design"]}
-          />
+      <div className="grid grid-cols-3 gap-8 mt-12">
+        {jobs.map((item: JobItemType) => (
+          <ItemJob key={item.id} {...item} />
         ))}
       </div>
     </div>

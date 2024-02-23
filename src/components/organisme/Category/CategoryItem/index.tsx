@@ -1,4 +1,3 @@
-import React from "react";
 import { BiCategory } from "react-icons/bi";
 import { HiOutlineArrowRight } from "react-icons/hi";
 

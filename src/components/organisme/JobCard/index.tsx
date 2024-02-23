@@ -11,7 +11,7 @@ interface TypeJobCard extends JobItemType {}
 
 export default function JobCard({
   applicants,
-  categories,
+  skills,
   image,
   jobType,
   location,
@@ -32,12 +32,12 @@ export default function JobCard({
             {type} . {location}
           </div>
           <div className="h-5 inline-flex gap-2 items-center">
-            <Badge variant="secondary" className="rounded-none">
+            <Badge variant="secondary" className="rounded-none ">
               {jobType}
             </Badge>
             <Separator orientation="vertical" />
-            {categories.map((item: string, i: number) => (
-              <Badge key={i} className="rounded-sm">
+            {skills.slice(0, 2).map((item: string, i: number) => (
+              <Badge key={i} className="rounded-sm" variant="outline">
                 {item}
               </Badge>
             ))}
