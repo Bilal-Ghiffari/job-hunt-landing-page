@@ -1,7 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import bcrypt from "bcryptjs";
-import { JobItemType, categoryJobType, optionType } from "../../types";
+import {
+  CompanyType,
+  JobItemType,
+  categoryJobType,
+  optionType,
+} from "../../types";
 import { string } from "zod";
 import { Job } from "@prisma/client";
 import { supabasePublicUrl } from "./supabase";
@@ -100,14 +105,52 @@ export const parsingJobs = async (
   return [];
 };
 
+export const parsingCompanies = async (
+  data: any,
+  isLoading: boolean,
+  error: Error
+) => {
+  if (!isLoading && !error && data?.length > 0) {
+    return await Promise.all(
+      data?.map(async (item: any) => {
+        let imageName = item.Companyoverview[0]?.image;
+        let imageUrl;
+        if (imageName) {
+          imageUrl = await supabasePublicUrl(imageName, "company");
+        } else {
+          imageUrl = "/images/company2.png";
+        }
+        const companyDetail = item.Companyoverview[0];
+        const company: CompanyType = {
+          id: item.id,
+          name: companyDetail?.name,
+          dateFounded: companyDetail?.dateFounded,
+          description: companyDetail?.description,
+          employes: companyDetail?.employes,
+          image: imageUrl,
+          industry: companyDetail?.industry,
+          location: companyDetail?.location,
+          sosmed: item?.sosmed,
+          teams: item?.CompanyTeam,
+          techStack: companyDetail?.techStack,
+          totalJobs: item?._count.Job,
+          website: companyDetail?.website,
+        };
+        return company;
+      })
+    );
+  }
+  return [];
+};
+
 export const parsingCategoriesToOptions = (
   data: any,
   isLoading: boolean,
   error: Error,
-  isIndustry?: boolean,
+  isIndustry?: boolean
 ) => {
   if (!isLoading && !error && data.length > 0) {
-    return data.map((item: { id: string, name: string}) => {
+    return data.map((item: { id: string; name: string }) => {
       return {
         id: isIndustry ? item.name : item.id,
         label: item.name,
