@@ -14,8 +14,6 @@ export default function Category({}: Props) {
     () => parsingCategories(data, isLoading, error),
     [data, isLoading, error]
   );
-  // console.log("memoize", categories);
-  // console.log("data", data);
   return (
     <div className="mt-32 mb-8">
       <TitleSection word1="Explore by" word2="category" />

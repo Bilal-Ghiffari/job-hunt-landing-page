@@ -22,7 +22,7 @@ export type optionType = {
 export type filterFormType = {
   label: string;
   name: string;
-  items: optionType[];
+  options: optionType[];
 };
 
 export type CompanyTeamType = {

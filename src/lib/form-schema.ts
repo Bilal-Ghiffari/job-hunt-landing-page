@@ -2,6 +2,12 @@ import { z } from "zod";
 
 export const formFilterSchema = z.object({
   categories: z.array(z.string()),
+  jobtype: z.array(z.string()),
+});
+
+export const formSearchShema = z.object({
+  title: z.string({ required_error: "Job Title is Required" }),
+  location: z.string({ required_error: "Location is Required" }),
 });
 
 export const formFilterCompanySchema = z.object({
@@ -17,10 +23,10 @@ export const formApplySchema = z.object({
     .string({ required_error: "Email is Required" })
     .email({ message: "Email not valid" }),
   phone: z.string().min(6, { message: "Phone have min 6 characters" }),
-  previousJObTitle: z.string(),
-  linkedIn: z.string(),
+  previousJobTitle: z.string(),
+  linkedin: z.string(),
   portofolio: z.string(),
-  coverLetter: z.string(),
+  converLetter: z.string(),
 });
 
 export const formSignInSchema = z.object({

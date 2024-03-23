@@ -6,6 +6,7 @@ export async function GET() {
     take: 6,
     include: {
       CategoryJob: true,
+      TypeJob: true,
       Company: {
         include: {
           Companyoverview: true,

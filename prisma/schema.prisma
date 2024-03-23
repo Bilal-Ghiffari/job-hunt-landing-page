@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Aplicant {
-  id               String  @id @default(cuid()) 
+  id               String  @id @default(cuid())
   userId           String?
   jobId            String?
   previousJobTitle String
@@ -17,6 +17,8 @@ model Aplicant {
   portofolio       String
   converLetter     String
   resume           String
+  fullname         String
+  email            String
   Job              Job?    @relation(fields: [jobId], references: [id])
   User             User?   @relation(fields: [userId], references: [id])
 }
@@ -66,7 +68,7 @@ model Companyoverview {
   name        String
   location    String
   employes    String
-  industry  String
+  industry    String
   dateFounded DateTime
   techStack   String[]
   description String
@@ -77,7 +79,6 @@ model Companyoverview {
 model Industry {
   id   String @id @default(cuid())
   name String
-  
 }
 
 model Job {
@@ -85,7 +86,6 @@ model Job {
   roles          String
   datePosted     DateTime     @default(now())
   dueDate        DateTime
-  jobType        String
   applicants     Int
   needs          Int
   salaryFrom     String
@@ -98,9 +98,11 @@ model Job {
   benefits       Json
   companyId      String?
   categoryId     String?
+  typeJobId      String?
   Aplicant       Aplicant[]
   CategoryJob    CategoryJob? @relation(fields: [categoryId], references: [id])
   Company        Company?     @relation(fields: [companyId], references: [id])
+  TypeJob        TypeJob?     @relation(fields: [typeJobId], references: [id])
 }
 
 model User {
@@ -109,4 +111,10 @@ model User {
   password String
   email    String     @unique
   Aplicant Aplicant[]
+}
+
+model TypeJob {
+  id   String @id
+  name String
+  Job  Job[]
 }

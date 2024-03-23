@@ -1,15 +1,22 @@
-import FormFilterDynamic from "@/components/organisme/FormFilterDynamic";
-import FormSearchDynamic from "@/components/organisme/FormSearchDynamic";
-import Image from "next/image";
-import React from "react";
-import { filterFormType } from "../../../types";
-import JobCard from "@/components/organisme/JobCard";
 import CompanyCard from "@/components/organisme/CompanyCard";
+import FormFilterDynamic, {
+  FilterFormProps,
+} from "@/components/organisme/FormFilterDynamic";
+import FormSearchDynamic from "@/components/organisme/FormSearchDynamic";
+import JobCard from "@/components/organisme/JobCard";
+import Image from "next/image";
+
+type FormFilterValues = {
+  categories: string[];
+  jobtype: string[];
+};
 
 type Props = {
-  formFilter: any;
-  onSubmitFilter: (val: any) => Promise<void>;
-  filterForms: filterFormType[];
+  formFilters: any;
+  formSearch: any;
+  onSubmitFilters: (val: FormFilterValues) => Promise<void>;
+  onSubmitSearch: (val: any) => Promise<void>;
+  filterForms: FilterFormProps[];
   loading: boolean;
   title: string;
   subTitle: string;
@@ -18,14 +25,16 @@ type Props = {
 };
 
 export default function ExploreDataContainer({
-  filterForms,
-  formFilter,
-  onSubmitFilter,
   loading,
   title,
   subTitle,
   data,
   type,
+  filterForms,
+  formFilters,
+  formSearch,
+  onSubmitFilters,
+  onSubmitSearch,
 }: Props) {
   return (
     <>
@@ -50,15 +59,19 @@ export default function ExploreDataContainer({
           <div className="text-center text-gray-500">{subTitle}</div>
         </div>
         <div>
-          <FormSearchDynamic />
+          <FormSearchDynamic
+            description="Popular : UI Designer, UX Researcher, Android, Admin"
+            form={formSearch}
+            onSubmitSearch={onSubmitSearch}
+          />
         </div>
       </div>
       <div className="mt-20 mb-16 px-32 flex flex-row items-start gap-10">
         <div className="w-1/5">
           <FormFilterDynamic
-            filterForms={filterForms}
-            formFilter={formFilter}
-            onSubmitFilter={onSubmitFilter}
+            form={formFilters}
+            checkboxForm={filterForms}
+            onSubmit={onSubmitFilters}
           />
         </div>
         <div className="w-4/5">

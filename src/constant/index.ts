@@ -2,7 +2,7 @@ import { filterFormType, optionType } from "../../types";
 
 export const LOCATION_OPTIONS: optionType[] = [
   {
-    id: "indonesia",
+    id: "Indonesia",
     label: "Indonesia",
   },
   {

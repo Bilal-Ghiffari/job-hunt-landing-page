@@ -8,7 +8,6 @@ export async function GET(req: Request) {
     searchParams.get("category") !== ""
       ? searchParams.get("category")?.split(",")
       : [];
-  console.log("filterCategory", filterCategory);
   const categoryQuery: Prisma.CompanyWhereInput =
     filterCategory && filterCategory.length > 0
       ? {
@@ -19,7 +18,6 @@ export async function GET(req: Request) {
           },
         }
       : {};
-  console.log("categoryQuery", categoryQuery);
   const company = await prisma.company.findMany({
     where: { ...categoryQuery },
     include: {

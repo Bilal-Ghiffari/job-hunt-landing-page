@@ -1,7 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import bcrypt from "bcryptjs";
+import dayjs from "dayjs";
 import {
+  CompanySocmedType,
   CompanyType,
   JobItemType,
   categoryJobType,
@@ -84,12 +86,11 @@ export const parsingJobs = async (
         } else {
           imageUrl = "/images/company2.png";
         }
-        // console.log("data jobs", item);
         const jobs: JobItemType = {
           applicants: item?.applicants,
           categories: item?.CategoryJob,
           image: imageUrl,
-          jobType: item?.jobType,
+          jobType: item?.TypeJob?.name,
           location: item?.Company?.Companyoverview[0]?.location,
           name: item?.roles,
           id: item?.id,
@@ -158,4 +159,53 @@ export const parsingCategoriesToOptions = (
     }) as optionType[];
   }
   return [];
+};
+
+export const formatDate = (
+  date: Date | string,
+  format: string = "DD MMM YYYY"
+) => {
+  let getFormated;
+  const dateNow: Date = new Date(Date.now());
+  if (date !== "") {
+    getFormated = dayjs(date).format(format);
+  } else {
+    getFormated = dayjs(dateNow).format(format);
+  }
+  return getFormated;
+};
+
+export const parsingSocialMedia = (data: CompanySocmedType[]) => {
+  let newData: string[] = [];
+  if (data.length > 0) {
+    for (let i = 0; i < data.length; i++) {
+      const social = data[i];
+      for (const key in social) {
+        if (key !== "id" && key !== "companyId") {
+          const value = social[key as keyof CompanySocmedType];
+          newData.push(value);
+        }
+      }
+    }
+  }
+
+  if (newData.length > 0) {
+    return newData;
+  }
+  return [];
+};
+
+export const stringToObject = (val?: string | null) => {
+  if (!val) {
+    return val;
+  }
+  // {}, {}, {}
+  const temp: string[] = val.split(",");
+  const obj: any = {};
+  let i = 0;
+  while (i < temp.length) {
+    obj[temp[i]] = temp[i + 1];
+    i += 2;
+  }
+  return obj;
 };

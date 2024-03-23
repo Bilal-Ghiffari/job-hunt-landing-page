@@ -5,46 +5,199 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import React from "react";
+import { redirect } from "next/navigation";
 import { BiCategory } from "react-icons/bi";
+import prisma from "../../../../../../lib/prisma";
+import { supabasePublicUrl } from "@/lib/supabase";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  JsonArray,
+  JsonObject,
+  JsonValue,
+} from "@prisma/client/runtime/library";
+import { formatDate } from "@/lib/utils";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-type Props = {};
+interface Applicant {
+  jobId: string | null;
+}
 
-export default function DetailPaageJob({}: Props) {
+async function getDetaiJob(id: string) {
+  const session = await getServerSession(authOptions);
+  const data = await prisma.job.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      Company: {
+        include: {
+          Companyoverview: true,
+        },
+      },
+      CategoryJob: true,
+    },
+  });
+  let imageUrl;
+  if (data?.Company?.Companyoverview[0].image) {
+    imageUrl = await supabasePublicUrl(
+      data?.Company?.Companyoverview[0].image,
+      "company"
+    );
+  } else {
+    imageUrl = "/images/company2.png";
+  }
+  const applicants = data?.applicants || 0;
+  const needs = data?.needs || 0;
+
+  const isApply: Applicant | null = await prisma.aplicant.findFirst({
+    where: {
+      userId: session?.user.id,
+    },
+    select: {
+      jobId: true,
+    },
+  });
+  // const isApply = await prisma.aplicant.count({
+  //   where: {
+  //     userId: session?.user.id,
+  //     jobId: id,
+  //   },
+  // });
+
+  if (!session) {
+    return {
+      ...data,
+      image: imageUrl,
+      benefits: data?.benefits as JsonArray,
+      needs,
+      applicants,
+      isApply,
+    };
+  } else {
+    return {
+      ...data,
+      image: imageUrl,
+      benefits: data?.benefits as JsonArray,
+      needs,
+      applicants,
+      isApply,
+    };
+  }
+}
+
+export default async function DetailPaageJob({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const session = await getServerSession(authOptions);
+  const data = await getDetaiJob(params.id);
+  const companyOverview = data?.Company?.Companyoverview[0];
   return (
     <>
       <div className="bg-slate-100 px-32 pt-10 pb-14">
         <div className="inline-flexx gap-3 text-sm text-muted-foreground"></div>
         <div className="bg-white shadow mt-10 p-5 w-11/12 mx-auto flex flex-row justify-between items-center">
           <div className="inline-flex items-center gap-5">
-            <Image
-              src="/images/company2.png"
-              alt="/images/company2.png"
-              width={88}
-              height={88}
-            />
+            <Image src={data?.image} alt={data?.image} width={88} height={88} />
             <div>
-              <div className="text-2xl font-semibold">
-                Social Media Assistant
-              </div>
+              <div className="text-2xl font-semibold">{data?.roles}</div>
               <div className="text-muted-foreground">
-                Agency . Paris, France . Full-Time
+                {companyOverview?.industry} . {companyOverview?.location} .{" "}
+                {data?.jobType}
               </div>
             </div>
           </div>
-          <FormModalApply />
+          {session ? (
+            <>
+              {data.isApply?.jobId === params?.id ? (
+                <Button
+                  size="lg"
+                  disabled
+                  className="text-lg px-12 py-6 bg-green-500"
+                >
+                  Applied
+                </Button>
+              ) : (
+                <FormModalApply
+                  id={params.id}
+                  image={data?.image}
+                  industry={
+                    companyOverview?.industry ?? "data industry not found"
+                  }
+                  jobType={data?.jobType ?? "data industry not found"}
+                  location={
+                    companyOverview?.location ?? "data location not found"
+                  }
+                  roles={data?.roles ?? "data roles not found"}
+                />
+              )}
+            </>
+          ) : (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="lg" className="text-lg px-12 py-6">
+                  Apply
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Let's join Job Hunt</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Log in first to enter this page.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => redirect("/auth/signin")}>
+                    Log In
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </div>
       <div className="px-32 py-16 flex flex-row items-start gap-10">
         <div className="w-3/4">
           <div className="mb-16">
+            <div className="text-4xl font-semibold mb-3">Description</div>
+            <div
+              className="text-muted-foreground text-justify"
+              dangerouslySetInnerHTML={{ __html: data?.description!! }}
+            ></div>
+          </div>
+          <div className="mb-16">
             <div className="text-4xl font-semibold mb-3">Responsibilitas</div>
-            <div className="text-muted-foreground">
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum
-                similique tempore eos quod, praesentium quisquam voluptate quae
-                nobis consequuntur qui?
-              </p>
-            </div>
+            <div
+              className="text-muted-foreground"
+              dangerouslySetInnerHTML={{ __html: data?.responsibility!! }}
+            ></div>
+          </div>
+          <div className="mb-16">
+            <div className="text-4xl font-semibold mb-3">Who You Are</div>
+            <div
+              className="text-muted-foreground"
+              dangerouslySetInnerHTML={{ __html: data?.whoYouAre!! }}
+            ></div>
+          </div>
+          <div className="mb-16">
+            <div className="text-4xl font-semibold mb-3">Nice To Haves</div>
+            <div
+              className="text-muted-foreground"
+              dangerouslySetInnerHTML={{ __html: data?.niceToHaves!! }}
+            ></div>
           </div>
         </div>
         <div className="w-1/4">
@@ -52,15 +205,35 @@ export default function DetailPaageJob({}: Props) {
             <div className="text-3xl font-semibold">About this role</div>
             <div className="mt-6 p-4 bg-slate-50">
               <div className="mb-2">
-                <span className="font-semibold">5 Applied</span>{" "}
-                <span className="text-gray-600">of 10 capacity</span>
+                <span className="font-semibold">
+                  {data?.applicants} Applied
+                </span>{" "}
+                <span className="text-gray-600">of {data?.needs} capacity</span>
               </div>
-              <Progress value={50} />
+              <Progress value={(data.applicants / data.needs) * 100} />
             </div>
             <div className="mt-6 space-y-4">
               <div className="flex flex-row justify-between">
                 <div className="text-gray-500">Apply Before</div>
-                <div className="font-semibold">Juli 31, 2024</div>
+                <div className="font-semibold">
+                  {formatDate(data?.dueDate!!)}
+                </div>
+              </div>
+              <div className="flex flex-row justify-between">
+                <div className="text-gray-500">Job Posted On</div>
+                <div className="font-semibold">
+                  {formatDate(data?.datePosted!!)}
+                </div>
+              </div>
+              <div className="flex flex-row justify-between">
+                <div className="text-gray-500">Job Type</div>
+                <div className="font-semibold">{data?.jobType}</div>
+              </div>
+              <div className="flex flex-row justify-between">
+                <div className="text-gray-500">Salary</div>
+                <div className="font-semibold">
+                  {data?.salaryFrom} - ${data?.salaryTo} USD
+                </div>
               </div>
             </div>
           </div>
@@ -68,40 +241,37 @@ export default function DetailPaageJob({}: Props) {
           <div>
             <div className="text-3xl font-semibold">Category</div>
             <div className="my-5 inline-flex gap-4">
-              <Badge>Marketing</Badge>
+              <Badge>{data?.CategoryJob?.name}</Badge>
             </div>
           </div>
           <Separator className="my-5" />
           <div>
-            <div className="text-3xl font-semibold">
-              Required Skills
-              <div className="my-5 inline-flex gap-4">
-                {[0, 1].map((item: number) => (
-                  <Badge variant="outline" key={item}>
-                    Marketing
-                  </Badge>
-                ))}
-              </div>
+            <div className="text-3xl font-semibold">Required Skills</div>
+            <div className="my-5 inline-flex gap-4 flex-wrap">
+              {data?.requiredSkills?.map((item: string, i: number) => (
+                <Badge variant="outline" key={item + i}>
+                  {item}
+                </Badge>
+              ))}
             </div>
           </div>
         </div>
       </div>
       <div className="px-32 pb-20">
         <Separator className="mb-14" />
-        <div className="mb-6">
+        <div className="mb-10">
           <div className="font-semibold text-3xl">Perks & Benefits</div>
           <div className="text-gray-500 mt-1">
             This job with saveral perks and benefits
           </div>
         </div>
-        <div className="grid grid-cols-5 gap-5">
-          {[0, 1, 2, 3].map((item: number) => (
-            <div key={item}>
+        <div className="grid grid-cols-5 gap-10">
+          {data?.benefits?.map((item: any, i: number) => (
+            <div key={item.benefit + i}>
               <BiCategory className="w-12 h-12 text-primary" />
-              <div className="font-semibold text-xl mt-6">Full Healtcare</div>
+              <div className="font-semibold text-lg mt-6">{item.benefit}</div>
               <div className="mt-3 text-sm text-gray-500">
-                we beliave in thriving communtes and that starts with our team
-                being happy and healthy
+                {item.description}
               </div>
             </div>
           ))}

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 interface CompanyCardTypes extends CompanyType {}
 
 export default function CompanyCard({
+  id,
   description,
   image,
   name,
@@ -17,7 +18,7 @@ export default function CompanyCard({
   return (
     <div
       className="border border-border p-6 cursor-pointer"
-      onClick={() => router.push("/detail/company/1")}
+      onClick={() => router.push("/detail/company/" + id)}
     >
       <div className="flex flex-row justify-between items-start">
         <Image src={image} alt={image} width={66} height={66} />

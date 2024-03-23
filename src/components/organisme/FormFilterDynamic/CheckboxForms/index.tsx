@@ -4,32 +4,33 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import React from "react";
 
-type Props = {
-  formFilter: any;
-  items: any[];
+export type FilterCheckboxOptionsProps = {
+  id: string;
+  label: string;
+};
+
+type FilterCheckboxProps = {
+  form: any;
+  options: FilterCheckboxOptionsProps[];
   name: string;
   label: string;
 };
 
 export default function CheckboxForms({
-  formFilter,
-  items,
+  form,
+  options,
   label,
   name,
-}: Props) {
+}: FilterCheckboxProps) {
   return (
     <Accordion
       defaultValue={name}
@@ -38,19 +39,17 @@ export default function CheckboxForms({
       collapsible
     >
       <AccordionItem value={name}>
-        <AccordionTrigger className="font-semibold first:pt-0">
-          {label}
-        </AccordionTrigger>
+        <AccordionTrigger className="font-semibold">{label}</AccordionTrigger>
         <AccordionContent>
           <FormField
-            control={formFilter.control}
+            control={form.control}
             name={name}
             render={() => (
               <FormItem className="space-y-5 text-gray-600 mt-5">
-                {items.map((item) => (
+                {options.map((item) => (
                   <FormField
                     key={item.id}
-                    control={formFilter.control}
+                    control={form.control}
                     name={name}
                     render={({ field }) => {
                       return (
@@ -59,20 +58,20 @@ export default function CheckboxForms({
                           className="flex flex-row items-start space-x-3 space-y-0"
                         >
                           <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(item.id)}
-                              onCheckedChange={(checked) => {
-                                console.log("field", `${field}`);
-                                // console.log("cheked", `${checked}`);
-                                return checked
-                                  ? field.onChange([...field.value, item.id])
-                                  : field.onChange(
-                                      field.value?.filter(
-                                        (value: any) => value !== item.id
-                                      )
-                                    );
-                              }}
-                            />
+                            <button type="submit">
+                              <Checkbox
+                                checked={field.value?.includes(item.id)}
+                                onCheckedChange={(checked: boolean) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value: any) => value !== item.id
+                                        )
+                                      );
+                                }}
+                              />
+                            </button>
                           </FormControl>
                           <FormLabel className="font-normal">
                             {item.label}

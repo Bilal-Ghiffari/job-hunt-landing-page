@@ -9,13 +9,11 @@ export const useListJobs = (path: string) => {
   const paserJobs = useCallback(async () => {
     const parseData = await parsingJobs(data, isLoading, error);
     setJobs(parseData);
-    console.log("parsingdata", parseData);
   }, [data, isLoading, error]);
 
   useEffect(() => {
     paserJobs();
   }, [data, isLoading, error]);
 
-  console.log("data", jobs);
   return { jobs, isLoading, error };
 };

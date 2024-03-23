@@ -1,44 +1,66 @@
 "use client";
 
 import ExploreDataContainer from "@/container/ExploreDataContainer";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { formFilterSchema } from "@/lib/form-schema";
-import { JobItemType, filterFormType } from "../../../../types";
-import { CATEGORIES_OPTIONS } from "@/constant";
 import { useCategoryJobFilter } from "@/hooks/useCategoryJobFilter";
 import { useJob } from "@/hooks/useJobs";
+import { useJobTypeFilter } from "@/hooks/useJobTypeFilter";
+import { formFilterSchema, formSearchShema } from "@/lib/form-schema";
+import { useFilterStore } from "@/lib/stores/filter";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { filterFormType } from "../../../../types";
+import { useSearchStore } from "@/lib/stores/search";
 
 type Props = {};
+type FormFilterValues = z.infer<typeof formFilterSchema>;
+type FormSearchValues = z.infer<typeof formSearchShema>;
 
 export default function FindJobs({}: Props) {
-  const { filters } = useCategoryJobFilter();
-  const [categories, setCategories] = useState<string[]>([]);
-  const { jobs, isLoading, mutate } = useJob(categories);
-  // console.log("filters", filters);
-  const formFilter = useForm<z.infer<typeof formFilterSchema>>({
+  const { filters: filtersCategory } = useCategoryJobFilter();
+  const { filters: filtersJobType } = useJobTypeFilter();
+  const combinedFilter: filterFormType[] = [
+    ...filtersCategory,
+    ...filtersJobType,
+  ];
+  const { setFilter } = useFilterStore((state) => state);
+  const { setSearch } = useSearchStore((state) => state);
+  const { jobs, isLoading, mutate } = useJob();
+  const formFilter = useForm<FormFilterValues>({
     resolver: zodResolver(formFilterSchema),
     defaultValues: {
       categories: [],
+      jobtype: [],
     },
   });
 
-  const onSubmitFormFilter = async (val: z.infer<typeof formFilterSchema>) => {
-    // console.log("val", val);
-    setCategories(val.categories);
+  const formSearch = useForm<FormSearchValues>({
+    resolver: zodResolver(formSearchShema),
+    defaultValues: {
+      location: "",
+      title: "",
+    },
+  });
+
+  const onSubmitFormFilters = async (val: FormFilterValues) => {
+    setFilter(val);
+  };
+
+  const onSubmitSearch = async (val: FormSearchValues) => {
+    setSearch(val);
   };
 
   useEffect(() => {
     mutate();
-    console.log("render");
-  }, [categories]);
+  }, []);
   return (
     <ExploreDataContainer
-      formFilter={formFilter}
-      onSubmitFilter={onSubmitFormFilter}
-      filterForms={filters}
+      formFilters={formFilter}
+      formSearch={formSearch}
+      onSubmitFilters={onSubmitFormFilters}
+      onSubmitSearch={onSubmitSearch}
+      filterForms={combinedFilter}
       title="dream job"
       subTitle="Find your next career at companies like HubSpot, Nike, and Dropbox"
       loading={isLoading}

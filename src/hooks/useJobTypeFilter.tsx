@@ -3,20 +3,20 @@ import { useMemo } from "react";
 import useSWR from "swr";
 import { filterFormType } from "../../types";
 
-export const useCategoryJobFilter = () => {
-  const { data, isLoading, error } = useSWR("/api/jobs/categories", fetcher);
-  const categories = useMemo(
+export const useJobTypeFilter = () => {
+  const { data, isLoading, error } = useSWR("/api/jobs/typejob", fetcher);
+  const jobType = useMemo(
     () => parsingCategoriesToOptions(data, isLoading, error),
     [data, isLoading, error]
   );
   const filters = useMemo(() => {
     return [
       {
-        label: "Categories",
-        name: "categories",
-        options: categories,
+        options: jobType,
+        label: "Job Type",
+        name: "jobtype",
       },
     ] as filterFormType[];
-  }, [categories]);
+  }, [jobType]);
   return { filters };
 };

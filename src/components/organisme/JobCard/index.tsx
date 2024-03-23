@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 interface TypeJobCard extends JobItemType {}
 
 export default function JobCard({
+  id,
   applicants,
   skills,
   image,
@@ -46,7 +47,7 @@ export default function JobCard({
       </div>
       <div className="w-[200px]">
         <Button
-          onClick={() => router.push("/detail/job/1")}
+          onClick={() => router.push("/detail/job/" + id)}
           className="w-full"
           size="lg"
         >
@@ -54,7 +55,7 @@ export default function JobCard({
         </Button>
         <Progress
           value={(applicants / needs) * 100}
-          className="mt-2 bg-green-500"
+          className="mt-2 first:bg-green-500 bg-gray-300"
         />
         <div className="text-gray-500 text-sm text-center mt-2">
           <span className="text-black font-semibold">
