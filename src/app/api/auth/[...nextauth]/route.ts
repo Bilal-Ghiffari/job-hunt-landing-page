@@ -11,6 +11,13 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_ID!!,
       clientSecret: process.env.GOOGLE_SECRET!!,
+      // profile: (profile) => {
+      //   console.log("id profile", profile);
+      //   return {
+      //     id: profile,
+      //     name: profile.nmae,
+      //   };
+      // },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -44,6 +51,9 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
     newUser: "/signup",
   },
+  session: {
+    maxAge: 1 * 24 * 60 * 60,
+  },
   callbacks: {
     async jwt({ token, user, account }) {
       if (account) {
@@ -51,11 +61,11 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ user, session, token }) {
       session.user.id = token.id as string;
       return session;
     },
-    async signIn({ account, profile }) {
+    async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         const existingUser = await prisma.user.findUnique({
           where: {
@@ -63,10 +73,9 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (existingUser) {
-          console.log("user already exists", existingUser);
+          user.id = existingUser.id as string;
         }
       }
-      console.log("account", account);
       return true;
     },
   },

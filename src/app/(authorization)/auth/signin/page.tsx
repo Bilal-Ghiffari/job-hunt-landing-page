@@ -25,17 +25,28 @@ export default function SignInPage({}: Props) {
   const form = useForm<z.infer<typeof formSignInSchema>>({
     resolver: zodResolver(formSignInSchema),
   });
-  const onSubmit = (val: z.infer<typeof formSignInSchema>) => {
-    console.log("val", val);
-  };
   const router = useRouter();
+  const onSubmit = async (val: z.infer<typeof formSignInSchema>) => {
+    const authenticated = await signIn("credentials", {
+      ...val,
+      redirect: false,
+    });
+    if (authenticated?.error) {
+      toast({
+        title: "Error",
+        description: "Email or password maybe wrong",
+      });
+      return;
+    }
+    router.push("/");
+  };
   const onSubmitSigninWithGoogle = async () => {
     const authenticated = await signIn("google", {
       redirect: false,
       callbackUrl: "/",
     });
+
     if (authenticated?.error) {
-      console.log("authenticatedError", authenticated?.error);
       toast({
         title: "Error",
         description: "Email or password maybe wrong",
