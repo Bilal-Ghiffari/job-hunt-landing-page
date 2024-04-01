@@ -1,10 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { FeatureJobType } from "../../../../../types";
+import { useRouter } from "next/navigation";
 
 interface JobItem extends FeatureJobType {}
 
 export default function ItemJob({
+  id,
   categories,
   desc,
   image,
@@ -14,8 +16,12 @@ export default function ItemJob({
   type,
   skills,
 }: JobItem) {
+  const router = useRouter();
   return (
-    <div className="border border-border p-6 cursor-pointer">
+    <div
+      className="border border-border p-6 cursor-pointer"
+      onClick={() => router.push(`detail/job/${id}`)}
+    >
       <div className="flex flex-row justify-between items-center">
         <Image src={image} alt={image} width={48} height={48} />
         <span className="px-4 py-1 text-xs font-semibold text-primary border border-primary bg-primary text-white rounded-sm">

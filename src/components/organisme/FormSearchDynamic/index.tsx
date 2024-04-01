@@ -1,4 +1,11 @@
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -7,30 +14,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { LOCATION_OPTIONS } from "@/constant";
-import React from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { HiOutlineLocationMarker } from "react-icons/hi";
-import { Separator } from "@/components/ui/separator";
 import { optionType } from "../../../../types";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
 
 type Props = {
   form: any;
   onSubmitSearch: (val: any) => Promise<void>;
   description: string;
+  placeholderSearch: string;
+  placeholderOption: string;
 };
 
 export default function FormSearchDynamic({
   description,
   form,
   onSubmitSearch,
+  placeholderSearch,
+  placeholderOption,
 }: Props) {
   return (
     <div className="mx-auto w-max">
@@ -47,7 +50,7 @@ export default function FormSearchDynamic({
                       <AiOutlineSearch className="w-6 h-6" />
                       <Input
                         className="py-5 w-[350px] border-none"
-                        placeholder="Job Title or keyword"
+                        placeholder={placeholderSearch}
                         {...field}
                       />
                     </div>
@@ -70,7 +73,7 @@ export default function FormSearchDynamic({
                     >
                       <FormControl>
                         <SelectTrigger className="w-[350px] border-none text-gray-500 outline-none py-5">
-                          <SelectValue placeholder="Select a location" />
+                          <SelectValue placeholder={placeholderOption} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

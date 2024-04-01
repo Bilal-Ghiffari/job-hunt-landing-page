@@ -1,14 +1,5 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import FormModalApply from "@/components/organisme/FormModalApply";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
-import React from "react";
-import { redirect } from "next/navigation";
-import { BiCategory } from "react-icons/bi";
-import prisma from "../../../../../../lib/prisma";
-import { supabasePublicUrl } from "@/lib/supabase";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,81 +11,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  JsonArray,
-  JsonObject,
-  JsonValue,
-} from "@prisma/client/runtime/library";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/utils";
+import { getDetaiJob } from "@/serverside/getDetailJob";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
-interface Applicant {
-  jobId: string | null;
-}
-
-async function getDetaiJob(id: string) {
-  const session = await getServerSession(authOptions);
-  const data = await prisma.job.findFirst({
-    where: {
-      id,
-    },
-    include: {
-      Company: {
-        include: {
-          Companyoverview: true,
-        },
-      },
-      CategoryJob: true,
-    },
-  });
-  let imageUrl;
-  if (data?.Company?.Companyoverview[0].image) {
-    imageUrl = await supabasePublicUrl(
-      data?.Company?.Companyoverview[0].image,
-      "company"
-    );
-  } else {
-    imageUrl = "/images/company2.png";
-  }
-  const applicants = data?.applicants || 0;
-  const needs = data?.needs || 0;
-
-  const isApply: Applicant | null = await prisma.aplicant.findFirst({
-    where: {
-      userId: session?.user.id,
-    },
-    select: {
-      jobId: true,
-    },
-  });
-  // const isApply = await prisma.aplicant.count({
-  //   where: {
-  //     userId: session?.user.id,
-  //     jobId: id,
-  //   },
-  // });
-
-  if (!session) {
-    return {
-      ...data,
-      image: imageUrl,
-      benefits: data?.benefits as JsonArray,
-      needs,
-      applicants,
-      isApply,
-    };
-  } else {
-    return {
-      ...data,
-      image: imageUrl,
-      benefits: data?.benefits as JsonArray,
-      needs,
-      applicants,
-      isApply,
-    };
-  }
-}
+import Image from "next/image";
+import Link from "next/link";
+import { BiCategory } from "react-icons/bi";
 
 export default async function DetailPaageJob({
   params,
@@ -102,7 +28,7 @@ export default async function DetailPaageJob({
   params: { id: string };
 }) {
   const session = await getServerSession(authOptions);
-  const data = await getDetaiJob(params.id);
+  const data: any = await getDetaiJob(params.id);
   const companyOverview = data?.Company?.Companyoverview[0];
   return (
     <>
@@ -115,7 +41,7 @@ export default async function DetailPaageJob({
               <div className="text-2xl font-semibold">{data?.roles}</div>
               <div className="text-muted-foreground">
                 {companyOverview?.industry} . {companyOverview?.location} .{" "}
-                {data?.jobType}
+                {data?.TypeJob.name}
               </div>
             </div>
           </div>
@@ -136,7 +62,7 @@ export default async function DetailPaageJob({
                   industry={
                     companyOverview?.industry ?? "data industry not found"
                   }
-                  jobType={data?.jobType ?? "data industry not found"}
+                  jobType={data?.TypeJob.name ?? "data industry not found"}
                   location={
                     companyOverview?.location ?? "data location not found"
                   }
@@ -160,9 +86,9 @@ export default async function DetailPaageJob({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => redirect("/auth/signin")}>
-                    Log In
-                  </AlertDialogAction>
+                  <Link href="/auth/signin">
+                    <AlertDialogAction>Log In</AlertDialogAction>
+                  </Link>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -175,28 +101,28 @@ export default async function DetailPaageJob({
             <div className="text-4xl font-semibold mb-3">Description</div>
             <div
               className="text-muted-foreground text-justify"
-              dangerouslySetInnerHTML={{ __html: data?.description!! }}
+              dangerouslySetInnerHTML={{ __html: data?.description }}
             ></div>
           </div>
           <div className="mb-16">
             <div className="text-4xl font-semibold mb-3">Responsibilitas</div>
             <div
               className="text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: data?.responsibility!! }}
+              dangerouslySetInnerHTML={{ __html: data?.responsibility }}
             ></div>
           </div>
           <div className="mb-16">
             <div className="text-4xl font-semibold mb-3">Who You Are</div>
             <div
               className="text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: data?.whoYouAre!! }}
+              dangerouslySetInnerHTML={{ __html: data?.whoYouAre }}
             ></div>
           </div>
           <div className="mb-16">
             <div className="text-4xl font-semibold mb-3">Nice To Haves</div>
             <div
               className="text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: data?.niceToHaves!! }}
+              dangerouslySetInnerHTML={{ __html: data?.niceToHaves }}
             ></div>
           </div>
         </div>
@@ -210,7 +136,7 @@ export default async function DetailPaageJob({
                 </span>{" "}
                 <span className="text-gray-600">of {data?.needs} capacity</span>
               </div>
-              <Progress value={(data.applicants / data.needs) * 100} />
+              <Progress value={(data?.applicants / data?.needs) * 100} />
             </div>
             <div className="mt-6 space-y-4">
               <div className="flex flex-row justify-between">
@@ -222,12 +148,12 @@ export default async function DetailPaageJob({
               <div className="flex flex-row justify-between">
                 <div className="text-gray-500">Job Posted On</div>
                 <div className="font-semibold">
-                  {formatDate(data?.datePosted!!)}
+                  {formatDate(data?.datePosted)}
                 </div>
               </div>
               <div className="flex flex-row justify-between">
                 <div className="text-gray-500">Job Type</div>
-                <div className="font-semibold">{data?.jobType}</div>
+                <div className="font-semibold">{data?.TypeJob.name}</div>
               </div>
               <div className="flex flex-row justify-between">
                 <div className="text-gray-500">Salary</div>
@@ -269,9 +195,9 @@ export default async function DetailPaageJob({
           {data?.benefits?.map((item: any, i: number) => (
             <div key={item.benefit + i}>
               <BiCategory className="w-12 h-12 text-primary" />
-              <div className="font-semibold text-lg mt-6">{item.benefit}</div>
+              <div className="font-semibold text-lg mt-6">{item?.benefit}</div>
               <div className="mt-3 text-sm text-gray-500">
-                {item.description}
+                {item?.description}
               </div>
             </div>
           ))}

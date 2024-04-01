@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Epilogue } from "next/font/google";
 import "../globals.css";
 import AuthProvider from "@/providers/AuthProvider";
+import I18NextProvider from "@/providers/I18NextProvider";
 
 const epilogue = Epilogue({ subsets: ["latin"] });
 
@@ -20,13 +21,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${epilogue.className} relative overflow-x-hidden`}>
-        <AuthProvider>
-          <NavbarComponent />
-          <main>
-            {children}
-            <Footer />
-          </main>
-        </AuthProvider>
+        <I18NextProvider>
+          <AuthProvider>
+            <NavbarComponent />
+            <main>
+              {children}
+              <Footer />
+            </main>
+          </AuthProvider>
+        </I18NextProvider>
       </body>
     </html>
   );

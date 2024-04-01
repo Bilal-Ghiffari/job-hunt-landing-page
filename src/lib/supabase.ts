@@ -20,7 +20,7 @@ export const supabaseUploadFile = async (
   const filename = `resume-${randomId(5)}.pdf`;
   const { data, error } = await supabase.storage
     .from(bucket)
-    .update(`public/${filename}`, file, {
+    .upload(`public/${filename}`, file, {
       cacheControl: "3600",
       upsert: false,
     });

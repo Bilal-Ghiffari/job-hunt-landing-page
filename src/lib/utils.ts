@@ -199,7 +199,6 @@ export const stringToObject = (val?: string | null) => {
   if (!val) {
     return val;
   }
-  // {}, {}, {}
   const temp: string[] = val.split(",");
   const obj: any = {};
   let i = 0;
@@ -208,4 +207,16 @@ export const stringToObject = (val?: string | null) => {
     i += 2;
   }
   return obj;
+};
+
+export const getImageInPrisma = async (image: string, defaultImage: string) => {
+  let imageUrl;
+  console.log("image", image);
+  if (image.length > 0 || image !== undefined) {
+    //   image
+    imageUrl = await supabasePublicUrl(image, "company");
+  } else {
+    imageUrl = defaultImage !== "" && defaultImage;
+  }
+  return imageUrl;
 };

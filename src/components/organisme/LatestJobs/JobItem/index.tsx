@@ -1,13 +1,13 @@
 import Image from "next/image";
 import React from "react";
-import { JobItemType } from "../../../../../types";
+import { JobItemType, LatestDataJobsType } from "../../../../../types";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-interface Props extends JobItemType {}
+interface Props extends LatestDataJobsType {}
 
 export default function JobItem({
-  categories,
+  category,
   image,
   jobType,
   location,
@@ -27,15 +27,12 @@ export default function JobItem({
         <div className="h-5 inline-flex gap-2 items-center">
           <Badge variant="secondary">{jobType}</Badge>
           <Separator orientation="vertical" />
-          {categories.map((item: string, i: number) => (
-            <Badge
-              variant="outline"
-              className="border-primary bg-primary/5 text-primary"
-              key={i}
-            >
-              {item}
-            </Badge>
-          ))}
+          <Badge
+            variant="outline"
+            className="border-primary bg-primary/5 text-primary"
+          >
+            {category}
+          </Badge>
         </div>
       </div>
     </div>

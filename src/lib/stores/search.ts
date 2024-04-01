@@ -7,12 +7,16 @@ type SearchType = {
 type SearchState = {
   search: SearchType;
   setSearch: (SearchType: SearchType) => void;
+  resetSearch: () => void;
+};
+
+const initialData = {
+  title: "",
+  location: "",
 };
 
 export const useSearchStore = create<SearchState>((set) => ({
-  search: {
-    title: "",
-    location: "",
-  },
+  search: initialData,
   setSearch: (search) => set(() => ({ search })),
+  resetSearch: () => set({ search: initialData }),
 }));

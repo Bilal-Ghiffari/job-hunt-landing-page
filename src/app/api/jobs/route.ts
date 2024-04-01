@@ -16,8 +16,7 @@ export async function GET(request: Request) {
 
   const search = searchParams.searchParams.get("search")!!;
   const location = searchParams.searchParams.get("location")!!;
-
-  const rolesCondition: Prisma.JobWhereInput =
+  const jobCondition: Prisma.JobWhereInput =
     search?.length > 0 || location?.length > 0
       ? {
           OR: [
@@ -56,10 +55,11 @@ export async function GET(request: Request) {
           ],
         }
       : {};
+
   const jobs = await prisma.job.findMany({
     where: {
       ...whereQuery,
-      ...rolesCondition,
+      ...jobCondition,
     },
     include: {
       CategoryJob: true,

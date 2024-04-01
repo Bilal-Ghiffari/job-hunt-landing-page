@@ -16,20 +16,74 @@ import { Textarea } from "@/components/ui/textarea";
 import { formApplySchema } from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import UploadField from "../UploadField";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { supabaseUploadFile } from "@/lib/supabase";
+import { toast } from "@/components/ui/use-toast";
 
-type Props = {};
+type Props = {
+  id: string;
+  roles: string;
+  industry: string;
+  location: string;
+  jobType: string;
+  image: string;
+};
 
-export default function FormModalApply({}: Props) {
+export default function FormModalApply({
+  id,
+  roles,
+  industry,
+  location,
+  jobType,
+  image,
+}: Props) {
+  const { status, data: session } = useSession();
+  console.log("data.session", session?.user.id);
+  const [disabled, setIsDisabled] = useState<boolean>(false);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formApplySchema>>({
     resolver: zodResolver(formApplySchema),
   });
   const onSubmit = async (val: z.infer<typeof formApplySchema>) => {
-    console.log(val);
-    form.reset(val);
+    setIsDisabled(true);
+    try {
+      const { error, filename } = await supabaseUploadFile(
+        val.resume,
+        "applicant"
+      );
+      if (error || !session?.user?.id) {
+        throw "Error";
+      }
+      const bodyDataApply = {
+        ...val,
+        userId: session?.user.id,
+        jobId: id,
+        resume: filename,
+      };
+
+      await fetch("/api/jobs/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyDataApply),
+      });
+      await toast({
+        title: "Success",
+        description: "Apply job success",
+      });
+      setIsDisabled(false);
+      router.replace("/");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Please try again",
+      });
+      setIsDisabled(false);
+    }
   };
   return (
     <Dialog>
@@ -38,23 +92,16 @@ export default function FormModalApply({}: Props) {
           Apply
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] ">
-        <div>
+      <DialogContent className="sm:max-w-[600px] max-h-screen">
+        <div className="overscroll-contain">
           <div className="inline-flex items-center gap-4">
             <div>
-              <Image
-                src="/images/company2.png"
-                alt="/images/company2.png"
-                width={60}
-                height={60}
-              />
+              <Image src={image} alt={image} width={60} height={60} />
             </div>
             <div>
-              <div className="text-lg font-semibold">
-                Social Media Assistant
-              </div>
+              <div className="text-lg font-semibold">{roles}</div>
               <div className="text-gray-500">
-                Agency . Paris . France . Full-Time
+                {industry} . {location} . {jobType}
               </div>
             </div>
           </div>
@@ -115,7 +162,7 @@ export default function FormModalApply({}: Props) {
                 />
                 <FormField
                   control={form.control}
-                  name="previousJObTitle"
+                  name="previousJobTitle"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Current of previous job title</FormLabel>
@@ -135,7 +182,7 @@ export default function FormModalApply({}: Props) {
               <div className="grid grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="linkedIn"
+                  name="linkedin"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>LinkedIn URL</FormLabel>
@@ -168,7 +215,7 @@ export default function FormModalApply({}: Props) {
               </div>
               <FormField
                 control={form.control}
-                name="coverLetter"
+                name="converLetter"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Additional Information</FormLabel>
@@ -183,7 +230,7 @@ export default function FormModalApply({}: Props) {
                 )}
               />
               <UploadField form={form} />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={disabled}>
                 Apply
               </Button>
             </form>

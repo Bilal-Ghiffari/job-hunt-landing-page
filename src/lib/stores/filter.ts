@@ -4,7 +4,7 @@ interface FilterType {
   jobtype?: string[];
   categories?: string[];
   salaryRange?: string[];
-  industri?: string[];
+  industry?: string[];
   companySize?: string[];
 }
 

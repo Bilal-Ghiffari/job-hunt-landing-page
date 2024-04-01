@@ -1,0 +1,66 @@
+{
+  "test": "test bahasa indonesia",
+  "select-lang": "Pilih Bahasa",
+  "show-more": "Lihat semua pekerjaan",
+  "navbar": {
+    "nav-item-1": "Cari Pekerjaan",
+    "nav-item-2": "Telusuri Perusahaan",
+    "btn-signin": "Masuk",
+    "btn-signup": "Daftar"
+  },
+  "hero": {
+    "title-1": "Telusuri",
+    "title-2": "Lebih dari",
+    "title-3": "5000+ Pekerjaan",
+    "desc": "Platform yang bagus untuk pencari kerja yang mencari karier baru dan memiliki keahlian dibidang startup.",
+    "input-job": "Nama Pekerjaan atau kata kunci",
+    "input-location": "Pilih lokasi",
+    "btn-search": "Cari Pekerjaan",
+    "desc-form": "Populer : UI Designer, UX Researcher, Android, Admin"
+  },
+  "client": {
+    "title": "Perusahaan yang kami bantu tumbuh"
+  },
+  "category": {
+    "title-1": "Cari berdasarkan",
+    "title-2": "kategori",
+    "jobs-available": "pekerjaan tersedia",
+    "show-jobs": "Tampilkan semua pekerjaan"
+  },
+  "banner": {
+    "title-1": "Mulai memposting",
+    "title-2": "Pekerjaan hari ini",
+    "desc": "Mulai memposting pekerjaan dengan harga hanya $10",
+    "btn-text": "Daftar gratis"
+  },
+  "featured": {
+    "title-1": "Pekerjaan",
+    "title-2": "unggulan"
+  },
+  "latest": {
+    "title-1": "Pekerjaan",
+    "title-2": "terbaru"
+  },
+  "findobsandcompanies": {
+    "title": "Temukan pekerjaan",
+    "titleJobs": "impian Anda",
+    "titleCompanies": "perusahaan impian",
+    "subTitleJobs": "Temukan karir Anda berikutnya di perusahaan seperti HubSpot, Nike, dan Dropbox",
+    "subTitleCompanies": "Temukan perusahaan impian tempat Anda bekerja",
+    "input-search": {
+      "placeholderJob": "Judul Pekerjaan atau kata kunci",
+      "placeholderCompanies": "Judul Perusahaan atau kata kunci",
+      "placeholder": "Pilih lokasi",
+      "descJob": "Populer : Desainer UI, Peneliti UX, Android, Admin",
+      "descCompanies": "Populer : Twitter, Facebook, Amazon, Gojek"
+    },
+    "checkbox-category": "Kategori",
+    "checkbox-jobtype": "Jenis Pekerjaan",
+    "checkbox-industry": "Industri",
+    "title2": "Semua",
+    "title2jobs": "Pekerjaan",
+    "title2companies": "perusahaan",
+    "subTitle2showing": "Menampilkan",
+    "subTitle2result": "Hasil"
+  }
+}

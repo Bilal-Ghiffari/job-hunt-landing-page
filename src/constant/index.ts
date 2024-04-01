@@ -17,6 +17,10 @@ export const LOCATION_OPTIONS: optionType[] = [
     id: "Thailand",
     label: "Thailand",
   },
+  {
+    id: "Amerika",
+    label: "Amerika",
+  },
 ];
 
 export const CATEGORIES_OPTIONS: optionType[] = [

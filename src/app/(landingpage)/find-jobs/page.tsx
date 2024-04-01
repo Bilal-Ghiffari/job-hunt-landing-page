@@ -12,47 +12,51 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { filterFormType } from "../../../../types";
 import { useSearchStore } from "@/lib/stores/search";
+import { useTranslation } from "react-i18next";
 
 type Props = {};
 type FormFilterValues = z.infer<typeof formFilterSchema>;
 type FormSearchValues = z.infer<typeof formSearchShema>;
 
-export default function FindJobs({}: Props) {
+export default function findobsandcompanies({}: Props) {
   const { filters: filtersCategory } = useCategoryJobFilter();
   const { filters: filtersJobType } = useJobTypeFilter();
   const combinedFilter: filterFormType[] = [
     ...filtersCategory,
     ...filtersJobType,
   ];
-  const { setFilter } = useFilterStore((state) => state);
-  const { setSearch } = useSearchStore((state) => state);
+  const { setFilter, resetFilter, filter } = useFilterStore((state) => state);
+  console.log("filter findjobs", filter.categories);
+  const { setSearch, resetSearch } = useSearchStore((state) => state);
+  const { t } = useTranslation();
   const { jobs, isLoading, mutate } = useJob();
   const formFilter = useForm<FormFilterValues>({
     resolver: zodResolver(formFilterSchema),
     defaultValues: {
-      categories: [],
-      jobtype: [],
+      categories: filter?.categories ?? [],
+      jobtype: filter?.jobtype ?? [],
     },
   });
-
   const formSearch = useForm<FormSearchValues>({
     resolver: zodResolver(formSearchShema),
     defaultValues: {
-      location: "",
+      location: "Indonesia",
       title: "",
     },
   });
 
   const onSubmitFormFilters = async (val: FormFilterValues) => {
-    setFilter(val);
+    setFilter(val!!);
   };
 
   const onSubmitSearch = async (val: FormSearchValues) => {
-    setSearch(val);
+    setSearch(val!!);
   };
 
   useEffect(() => {
     mutate();
+    // resetFilter();
+    resetSearch();
   }, []);
   return (
     <ExploreDataContainer
@@ -61,8 +65,8 @@ export default function FindJobs({}: Props) {
       onSubmitFilters={onSubmitFormFilters}
       onSubmitSearch={onSubmitSearch}
       filterForms={combinedFilter}
-      title="dream job"
-      subTitle="Find your next career at companies like HubSpot, Nike, and Dropbox"
+      title={t("findobsandcompanies.titleJobs")}
+      subTitle={t("findobsandcompanies.subTitleJobs")}
       loading={isLoading}
       type="job"
       data={jobs}

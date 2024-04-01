@@ -66,3 +66,17 @@ export type categoryJobType = {
     Job: number;
   };
 };
+
+export type LatestDataJobsType = {
+  id?: string;
+  name: string;
+  category: string;
+  image: string;
+  jobType: string;
+  location: string;
+  type: string;
+};
+
+export type ApplicantType = {
+  jobId: string | null;
+};

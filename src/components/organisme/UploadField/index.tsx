@@ -11,7 +11,6 @@ export default function UploadField({ form }: Props) {
 
   const handleSelectFile = () => {
     inputRef.current?.click();
-    console.log("current", inputRef.current);
   };
 
   const handleFileOnChange = (e: ChangeEvent<HTMLInputElement>) => {

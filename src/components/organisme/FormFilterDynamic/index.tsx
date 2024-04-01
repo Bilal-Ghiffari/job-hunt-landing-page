@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useFilterStore } from "@/lib/stores/filter";
 import CheckboxForms, { FilterCheckboxOptionsProps } from "./CheckboxForms";
 
 type FormFilterValues = {
   categories: string[];
   jobtype: string[];
+  industry?: string[];
 };
 
 export type FilterFormProps = {
@@ -16,7 +16,8 @@ export type FilterFormProps = {
 
 type FilterFormDataProps = {
   form: any;
-  onSubmit: (values: FormFilterValues) => Promise<void>;
+  onSubmit: (values: any) => Promise<void>;
+  onReset: () => void;
   checkboxForm: FilterFormProps[];
   type?: "jobs" | "companies";
 };
@@ -25,12 +26,8 @@ export default function FormFilterDynamic({
   onSubmit,
   form,
   checkboxForm,
+  onReset,
 }: FilterFormDataProps) {
-  const { resetFilter } = useFilterStore((state) => state);
-  const handleResetFilter = () => {
-    resetFilter();
-    form.reset();
-  };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -43,11 +40,7 @@ export default function FormFilterDynamic({
             name={item.name}
           />
         ))}
-        <Button
-          variant="outline"
-          onClick={handleResetFilter}
-          className="mt-3 w-full"
-        >
+        <Button variant="outline" onClick={onReset} className="mt-3 w-full">
           Reset
         </Button>
       </form>

@@ -4,17 +4,22 @@ import FormFilterDynamic, {
 } from "@/components/organisme/FormFilterDynamic";
 import FormSearchDynamic from "@/components/organisme/FormSearchDynamic";
 import JobCard from "@/components/organisme/JobCard";
+import { useFilterStore } from "@/lib/stores/filter";
+import { useSearchStore } from "@/lib/stores/search";
 import Image from "next/image";
+import { useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 type FormFilterValues = {
   categories: string[];
   jobtype: string[];
+  industry?: string[];
 };
 
 type Props = {
   formFilters: any;
   formSearch: any;
-  onSubmitFilters: (val: FormFilterValues) => Promise<void>;
+  onSubmitFilters: (val: any) => Promise<void>;
   onSubmitSearch: (val: any) => Promise<void>;
   filterForms: FilterFormProps[];
   loading: boolean;
@@ -36,12 +41,24 @@ export default function ExploreDataContainer({
   onSubmitFilters,
   onSubmitSearch,
 }: Props) {
+  const { resetFilter } = useFilterStore((state) => state);
+  const { resetSearch } = useSearchStore((state) => state);
+  const { t } = useTranslation();
+  const handleResetFilter = useCallback(() => {
+    resetFilter();
+    resetSearch();
+    formFilters.reset({ categories: [], jobtype: [] });
+    formSearch.reset();
+  }, [resetFilter, resetSearch, formFilters, formSearch]);
+
   return (
     <>
       <div className="bg-gray-200 px-32 pt-16 pb-14">
         <div className="mb-10">
           <div className="mx-auto mb-11 text-center flex justify-center gap-2">
-            <span className="text-5xl font-semibold">Find Your</span>
+            <span className="text-5xl font-semibold">
+              {t("findobsandcompanies.title")}
+            </span>
             <div className="relative">
               <span className="text-5xl font-semibold text-primary">
                 {title}
@@ -60,9 +77,21 @@ export default function ExploreDataContainer({
         </div>
         <div>
           <FormSearchDynamic
-            description="Popular : UI Designer, UX Researcher, Android, Admin"
+            description={
+              type === "company"
+                ? t("findobsandcompanies.input-search.descCompanies")
+                : t("findobsandcompanies.input-search.descJob")
+            }
             form={formSearch}
             onSubmitSearch={onSubmitSearch}
+            placeholderSearch={
+              type === "company"
+                ? t("findobsandcompanies.input-search.placeholderCompanies")
+                : t("findobsandcompanies.input-search.placeholderJob")
+            }
+            placeholderOption={t(
+              "findobsandcompanies.input-search.placeholder"
+            )}
           />
         </div>
       </div>
@@ -70,6 +99,7 @@ export default function ExploreDataContainer({
         <div className="w-1/5">
           <FormFilterDynamic
             form={formFilters}
+            onReset={handleResetFilter}
             checkboxForm={filterForms}
             onSubmit={onSubmitFilters}
           />
@@ -77,10 +107,14 @@ export default function ExploreDataContainer({
         <div className="w-4/5">
           <div className="mb-8">
             <div className="text-3xl font-semibold">
-              All {type === "job" ? "Jobs" : "Companies"}
+              {t("findobsandcompanies.title2")}{" "}
+              {type === "job"
+                ? t("findobsandcompanies.title2jobs")
+                : t("findobsandcompanies.title2companies")}
             </div>
             <div className="text-muted-foreground">
-              Showing {data.length} Result
+              {t("findobsandcompanies.subTitle2showing")} {data.length}{" "}
+              {t("findobsandcompanies.subTitle2result")}
             </div>
           </div>
           {loading ? (

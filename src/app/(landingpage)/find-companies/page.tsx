@@ -5,43 +5,68 @@ import { CompanyType, filterFormType } from "../../../../types";
 import { CATEGORIES_OPTIONS } from "@/constant";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { formFilterCompanySchema } from "@/lib/form-schema";
+import {
+  formFilterCompanySchema,
+  formFilterSchema,
+  formSearchShema,
+} from "@/lib/form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ExploreDataContainer from "@/container/ExploreDataContainer";
 import { useFilterCategoryCompany } from "@/hooks/useCategoryCompanyFilter";
 import useCompanies from "@/hooks/useCompanies";
+import { useFilterStore } from "@/lib/stores/filter";
+import { useSearchStore } from "@/lib/stores/search";
+import { useTranslation } from "react-i18next";
 
 type Props = {};
-
+type FormFilterValues = z.infer<typeof formFilterCompanySchema>;
+type FormSearchValues = z.infer<typeof formSearchShema>;
 export default function FindCompanies({}: Props) {
   const { filter } = useFilterCategoryCompany();
-  const [categories, setCategories] = useState<string[]>([]);
-  const { companies, isLoading, mutate } = useCompanies(categories);
-  const forms = useForm<z.infer<typeof formFilterCompanySchema>>({
+  const { t } = useTranslation();
+  const { setFilter, resetFilter } = useFilterStore((state) => state);
+  const { setSearch, resetSearch } = useSearchStore((state) => state);
+  const { companies, isLoading, mutate } = useCompanies();
+  const formFilters = useForm<FormFilterValues>({
     resolver: zodResolver(formFilterCompanySchema),
     defaultValues: {
       industry: [],
     },
   });
 
-  console.log("val", categories.join(","));
-  const onSubmit = async (val: z.infer<typeof formFilterCompanySchema>) => {
-    setCategories(val.industry);
+  const formSearch = useForm<FormSearchValues>({
+    resolver: zodResolver(formSearchShema),
+    defaultValues: {
+      location: "",
+      title: "",
+    },
+  });
+
+  const onSubmitFormFilters = async (val: FormFilterValues) => {
+    setFilter(val!!);
+  };
+
+  const onSubmitSearch = async (val: FormSearchValues) => {
+    setSearch(val!!);
   };
 
   useEffect(() => {
     mutate();
-  }, [categories]);
+    resetFilter();
+    resetSearch();
+  }, []);
 
   return (
     <ExploreDataContainer
+      formSearch={formSearch}
+      formFilters={formFilters}
       data={companies}
       filterForms={filter}
-      formFilter={forms}
       loading={isLoading}
-      onSubmitFilter={onSubmit}
-      subTitle="Find the dreame companies you dream work for"
-      title="dream companies"
+      onSubmitFilters={onSubmitFormFilters}
+      onSubmitSearch={onSubmitSearch}
+      subTitle={t("findobsandcompanies.subTitleCompanies")}
+      title={t("findobsandcompanies.titleCompanies")}
       type="company"
     />
   );
