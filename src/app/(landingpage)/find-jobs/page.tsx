@@ -26,7 +26,6 @@ export default function findobsandcompanies({}: Props) {
     ...filtersJobType,
   ];
   const { setFilter, resetFilter, filter } = useFilterStore((state) => state);
-  console.log("filter findjobs", filter.categories);
   const { setSearch, resetSearch } = useSearchStore((state) => state);
   const { t } = useTranslation();
   const { jobs, isLoading, mutate } = useJob();

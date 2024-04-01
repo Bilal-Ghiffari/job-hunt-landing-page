@@ -20,7 +20,6 @@ export default function Category({}: Props) {
   const { t } = useTranslation();
   const router = useRouter();
   const { setFilter, filter } = useFilterStore();
-  console.log("filter category", filter.categories);
   const onClick = (id: any) => {
     router.push("/find-jobs");
     setFilter({ categories: [id] });

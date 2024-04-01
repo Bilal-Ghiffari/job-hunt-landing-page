@@ -10,7 +10,6 @@ const JOB_PATH = "/api/jobs";
 export const useJob = () => {
   const { categories, jobtype } = useFilterStore((state) => state.filter);
   const { title, location } = useSearchStore((state) => state.search);
-  console.log("cate", categories);
 
   const paramQueryString = useMemo(() => {
     const categoryParam = categories?.join(",");

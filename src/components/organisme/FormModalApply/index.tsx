@@ -43,7 +43,6 @@ export default function FormModalApply({
   image,
 }: Props) {
   const { status, data: session } = useSession();
-  console.log("data.session", session?.user.id);
   const [disabled, setIsDisabled] = useState<boolean>(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof formApplySchema>>({

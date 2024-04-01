@@ -13,7 +13,6 @@ type Props = {};
 
 export default function NavbarComponent({}: Props) {
   const { status, data: session } = useSession();
-  console.log("session", session);
   const router = useRouter();
   const { t } = useTranslation();
   return (

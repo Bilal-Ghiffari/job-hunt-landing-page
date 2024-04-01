@@ -24,7 +24,6 @@ export async function getDetaiJob(id: string) {
   const image = data?.Company?.Companyoverview[0].image!!;
   const defaultImage = "/images/company2.png";
   const imageUrl = await getImageInPrisma(image, defaultImage);
-  console.log("imageUrlTypeOF", typeof imageUrl);
   const applicants = data?.applicants || 0;
   const needs = data?.needs || 0;
 

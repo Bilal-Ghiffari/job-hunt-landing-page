@@ -211,7 +211,6 @@ export const stringToObject = (val?: string | null) => {
 
 export const getImageInPrisma = async (image: string, defaultImage: string) => {
   let imageUrl;
-  console.log("image", image);
   if (image.length > 0 || image !== undefined) {
     //   image
     imageUrl = await supabasePublicUrl(image, "company");
