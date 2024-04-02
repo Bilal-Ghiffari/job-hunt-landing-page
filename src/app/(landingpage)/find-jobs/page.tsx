@@ -6,26 +6,26 @@ import { useJob } from "@/hooks/useJobs";
 import { useJobTypeFilter } from "@/hooks/useJobTypeFilter";
 import { formFilterSchema, formSearchShema } from "@/lib/form-schema";
 import { useFilterStore } from "@/lib/stores/filter";
+import { useSearchStore } from "@/lib/stores/search";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { filterFormType } from "../../../../types";
-import { useSearchStore } from "@/lib/stores/search";
-import { useTranslation } from "react-i18next";
 
 type Props = {};
 type FormFilterValues = z.infer<typeof formFilterSchema>;
 type FormSearchValues = z.infer<typeof formSearchShema>;
 
-export default function findobsandcompanies({}: Props) {
+export default function FindJobs({}: Props) {
   const { filters: filtersCategory } = useCategoryJobFilter();
   const { filters: filtersJobType } = useJobTypeFilter();
   const combinedFilter: filterFormType[] = [
     ...filtersCategory,
     ...filtersJobType,
   ];
-  const { setFilter, resetFilter, filter } = useFilterStore((state) => state);
+  const { setFilter, filter } = useFilterStore((state) => state);
   const { setSearch, resetSearch } = useSearchStore((state) => state);
   const { t } = useTranslation();
   const { jobs, isLoading, mutate } = useJob();
@@ -54,9 +54,8 @@ export default function findobsandcompanies({}: Props) {
 
   useEffect(() => {
     mutate();
-    // resetFilter();
     resetSearch();
-  }, []);
+  }, [mutate, resetSearch]);
   return (
     <ExploreDataContainer
       formFilters={formFilter}

@@ -34,6 +34,8 @@ type Props = {
   image: string;
 };
 
+type FormApplyValues = z.infer<typeof formApplySchema>;
+
 export default function FormModalApply({
   id,
   roles,
@@ -45,10 +47,10 @@ export default function FormModalApply({
   const { status, data: session } = useSession();
   const [disabled, setIsDisabled] = useState<boolean>(false);
   const router = useRouter();
-  const form = useForm<z.infer<typeof formApplySchema>>({
+  const form = useForm<FormApplyValues>({
     resolver: zodResolver(formApplySchema),
   });
-  const onSubmit = async (val: z.infer<typeof formApplySchema>) => {
+  const onSubmit = async (val: FormApplyValues) => {
     setIsDisabled(true);
     try {
       const { error, filename } = await supabaseUploadFile(

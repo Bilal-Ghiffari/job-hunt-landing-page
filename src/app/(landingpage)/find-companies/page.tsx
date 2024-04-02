@@ -54,7 +54,7 @@ export default function FindCompanies({}: Props) {
     mutate();
     resetFilter();
     resetSearch();
-  }, []);
+  }, [mutate, resetFilter, resetSearch]);
 
   return (
     <ExploreDataContainer

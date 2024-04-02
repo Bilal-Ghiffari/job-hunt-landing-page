@@ -12,6 +12,7 @@ export default async function LatestJobs({}: Props) {
       <div className="mt-12 grid grid-cols-3 gap-8">
         {data?.map((item: LatestDataJobsType) => (
           <JobItem
+            key={item.id + item.name}
             category={item.category}
             image={item.image}
             jobType={item.jobType}

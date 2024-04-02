@@ -3,6 +3,7 @@ import prisma from "../../lib/prisma";
 import { getImageInPrisma } from "@/lib/utils";
 import { LatestDataJobsType } from "../../types";
 
+export const revalidate = 0;
 export async function GetLatestDataJobs() {
   try {
     const data: Job[] = await prisma.job.findMany({

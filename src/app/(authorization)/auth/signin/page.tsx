@@ -100,7 +100,7 @@ export default function SignInPage({}: Props) {
         Sign In with Google
       </Button>
       <div className="text-gray-500 text-sm mt-6">
-        don't have an account?{" "}
+        don&apos;t have an account?{" "}
         <Link href="/auth/signup" className="text-primary font-medium">
           Sign Up
         </Link>

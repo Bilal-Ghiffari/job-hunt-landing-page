@@ -1,4 +1,3 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import FormModalApply from "@/components/organisme/FormModalApply";
 import {
   AlertDialog,
@@ -15,7 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { formatDate } from "@/lib/utils";
+import { authOptions, formatDate } from "@/lib/utils";
+import { getApplicantById } from "@/serverside/getApplicantById";
 import { getDetaiJob } from "@/serverside/getDetailJob";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -29,7 +29,9 @@ export default async function DetailPaageJob({
 }) {
   const session = await getServerSession(authOptions);
   const data: any = await getDetaiJob(params.id);
+  const { isApply } = await getApplicantById(params.id);
   const companyOverview = data?.Company?.Companyoverview[0];
+
   return (
     <>
       <div className="bg-slate-100 px-32 pt-10 pb-14">
@@ -45,9 +47,9 @@ export default async function DetailPaageJob({
               </div>
             </div>
           </div>
-          {session ? (
+          {session?.user ? (
             <>
-              {data.isApply?.jobId === params?.id ? (
+              {isApply ? (
                 <Button
                   size="lg"
                   disabled
@@ -57,7 +59,7 @@ export default async function DetailPaageJob({
                 </Button>
               ) : (
                 <FormModalApply
-                  id={params.id}
+                  id={params?.id}
                   image={data?.image}
                   industry={
                     companyOverview?.industry ?? "data industry not found"
@@ -79,7 +81,7 @@ export default async function DetailPaageJob({
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Let's join Job Hunt</AlertDialogTitle>
+                  <AlertDialogTitle>Let&apos;s join Job Hunt</AlertDialogTitle>
                   <AlertDialogDescription>
                     Log in first to enter this page.
                   </AlertDialogDescription>
