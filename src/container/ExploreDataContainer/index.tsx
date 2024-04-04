@@ -1,13 +1,15 @@
 import CompanyCard from "@/components/organisme/CompanyCard";
+import EmptyData from "@/components/organisme/EmptyData";
 import FormFilterDynamic, {
   FilterFormProps,
 } from "@/components/organisme/FormFilterDynamic";
 import FormSearchDynamic from "@/components/organisme/FormSearchDynamic";
 import JobCard from "@/components/organisme/JobCard";
+import SkeletonJob from "@/components/organisme/JobCard/SkeletonJob";
 import { useFilterStore } from "@/lib/stores/filter";
 import { useSearchStore } from "@/lib/stores/search";
 import Image from "next/image";
-import { useCallback, useEffect } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 type FormFilterValues = {
@@ -118,8 +120,10 @@ export default function ExploreDataContainer({
             </div>
           </div>
           {loading ? (
-            <div>Loading...</div>
-          ) : (
+            Array(4)
+              .fill(4)
+              .map((_, i) => <SkeletonJob key={i} />)
+          ) : data?.length > 0 ? (
             <>
               {type === "job" ? (
                 <div className="grid grid-cols-1 gap-7">
@@ -135,6 +139,8 @@ export default function ExploreDataContainer({
                 </div>
               )}
             </>
+          ) : (
+            <EmptyData />
           )}
         </div>
       </div>
